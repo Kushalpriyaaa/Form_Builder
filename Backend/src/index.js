@@ -1,53 +1,61 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const mongoose = require("mongoose");
+const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Import routes
-const authRoutes = require('./routes/authRoutes');
-const formRoutes = require('./routes/formRoutes');
-const responseRoutes = require('./routes/responseRoutes');
-const webhookRoutes = require('./routes/webhookRoutes');
-
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(morgan("dev"));
 
-// MongoDB Connection
-const MONGO_URI = process.env.MONGO_URI;
+// Routes
+const authRoutes = require("./routes/authRoutes");
+const formRoutes = require("./routes/formRoutes");
+const responseRoutes = require("./routes/responseRoutes");
+const webhookRoutes = require("./routes/webhookRoutes");
 
-if (!MONGO_URI) {
-    console.error('❌ Error: MONGO_URI is missing in .env file');
-    process.exit(1);
+// Mount route groups
+app.use("/api/auth", authRoutes);        // FIXED → login URL works
+app.use("/api/forms", formRoutes);
+app.use("/api/forms", responseRoutes);
+app.use("/webhooks/airtable", webhookRoutes);
+
+// Test
+app.get("/", (req, res) => {
+  res.send("Backend is running successfully!");
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error("Unhandled Error:", err);
+  res.status(500).json({ message: "Internal server error" });
+});
+
+// Start server
+async function start() {
+  try {
+    if (!process.env.MONGO_URI) {
+      console.warn("No MongoDB URI provided.");
+    } else {
+      await mongoose.connect(process.env.MONGO_URI);
+      console.log("✅ MongoDB Connected");
+    }
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at https://form-builder-2-flc8.onrender.com/`);
+    });
+  } catch (err) {
+    console.error("Failed to start server", err);
+  }
 }
 
-mongoose
-    .connect(MONGO_URI)
-    .then(() => console.log('✅ MongoDB connected successfully'))
-    .catch((err) => {
-        console.error('❌ MongoDB Connection Error:', err);
-        process.exit(1);
-    });
-
-// API Routes
-app.use('/api/auth', authRoutes);
-
-app.use('/api/forms', formRoutes);
-app.use('/api/forms', responseRoutes);   // responses will be under /api/forms/:formId/responses
-app.use('/webhooks', webhookRoutes);
-
-// Test route
-app.get('/', (req, res) => {
-    res.send('Backend is running successfully!');
-});
-
-// Start Server
-app.listen(PORT, () => {
-    console.log(`🚀 Server is running at https://form-builder-2-flc8.onrender.com/`);
-});
+start();

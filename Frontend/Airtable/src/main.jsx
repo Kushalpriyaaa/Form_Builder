@@ -12,3 +12,4 @@ createRoot(document.getElementById("root")).render(
     </AuthProvider>
   </BrowserRouter>
 );
+<Route path="/oauth/callback" element={<OAuthCallback />} />

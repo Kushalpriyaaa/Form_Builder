@@ -1,17 +1,20 @@
-import React from 'react';
-import '../styles/login.css';
+import React from "react";
+import "../styles/login.css";
 
 export default function Login() {
-  // eslint-disable-next-line no-undef
-  const api = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const backendURL = import.meta.env.VITE_API_BASE;
+
+  function handleLogin() {
+    window.location.href = `${backendURL}/api/auth/airtable/login`;
+  }
 
   return (
     <div className="page-login">
       <div className="login-card">
-        <h2>Sign in with Airtable</h2>
-        <p>Click the button below to authenticate with Airtable.</p>
-        <a className="btn btn-primary" href={`${api}/api/auth/airtable/login`}>Login with Airtable</a>
-        <p className="muted">You will be redirected to Airtable to grant access.</p>
+        <h2>Login with Airtable</h2>
+        <button onClick={handleLogin} className="btn-primary">
+          Login with Airtable OAuth
+        </button>
       </div>
     </div>
   );
