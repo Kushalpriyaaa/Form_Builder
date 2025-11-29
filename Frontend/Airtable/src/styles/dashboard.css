@@ -1,1 +1,14 @@
-.page-dashboard .grid-2{margin-top:16px}
+.page-dashboard .grid-2{
+  margin-top:18px;
+}
+
+.dashboard-kpis{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+.dashboard-kpis .card{
+  flex:1;
+  min-width:200px;
+}

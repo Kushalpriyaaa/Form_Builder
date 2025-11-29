@@ -1,1 +1,12 @@
-.page-responses .response-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.responses-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.response-item{
+  padding:12px;
+  border-radius:10px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+  border:1px solid rgba(255,255,255,0.02);
+}
