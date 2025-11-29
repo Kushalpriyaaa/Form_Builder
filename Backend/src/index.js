@@ -49,5 +49,5 @@ app.get('/', (req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-    console.log(`🚀 Server is running at http://localhost:${PORT}`);
+    console.log(`🚀 Server is running at https://form-builder-2-flc8.onrender.com/`);
 });
